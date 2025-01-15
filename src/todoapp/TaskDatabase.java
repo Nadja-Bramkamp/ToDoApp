@@ -14,6 +14,7 @@ public class TaskDatabase {
 
     // Save the Task and return the corresponding object that includes the id given by the database
     public Task saveTask(String title, boolean completed) {
+        // Create SQL-Statement
         String sql = "INSERT INTO tasks (title, completed) VALUES (?, ?)";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -24,6 +25,7 @@ public class TaskDatabase {
 
             int rowsAffected = pstmt.executeUpdate();
 
+            // Return the inserted Task that contains now the database ID
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
@@ -33,20 +35,24 @@ public class TaskDatabase {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error when adding task: " + e.getMessage());
+            System.err.println("Fehler beim Hinzufügen der Task: " + e.getMessage());
         }
 
         return null;
     }
 
+    // Load existing tasks
     public List<Task> loadTasks() {
+        // result list
         List<Task> tasks = new ArrayList<>();
+        // SQL Statement
         String sql = "SELECT id, title, completed FROM tasks";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
+            // Create result list
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String title = rs.getString("title");
@@ -56,13 +62,15 @@ public class TaskDatabase {
                 tasks.get(tasks.size() - 1).setIsCompleted(isCompleted);
             }
         } catch (Exception e) {
-            System.err.println("Error when loading task: " + e.getMessage());
+            System.err.println("Fehler beim Laden der Tasks: " + e.getMessage());
         }
 
         return tasks;
     }
 
+    // Delete task from database by ID
     public void deleteTask(int id) {
+        // SQL Statement
         String sql = "DELETE FROM tasks WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -81,17 +89,19 @@ public class TaskDatabase {
         }
     }
 
+    // Update the completed-Boolean by Database ID
     public void updateTaskStatus(int id, boolean isCompleted) {
+        // SQL-Statement
         String sql = "UPDATE tasks SET completed = ? WHERE id = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Setze die Parameter
+            // Set Parameter
             pstmt.setInt(1, isCompleted ? 1 : 0); // 1 = true, 0 = false
             pstmt.setInt(2, id);
 
-            // Führe die Abfrage aus
+            // Execute Statement
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
                 System.out.println("Status von Task mit ID " + id + " wurde erfolgreich aktualisiert.");

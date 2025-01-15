@@ -106,7 +106,7 @@ public class ToDoAppGUI {
             // If the state of the checkbox changes, then update the database
             checkBox.addItemListener(e -> {
                 boolean isChecked = (e.getStateChange() == ItemEvent.SELECTED);
-                task.setIsCompleted(isChecked); // Aktualisiere das Objekt
+                task.setIsCompleted(isChecked);
                 this.taskManager.getTaskDatabase().updateTaskStatus(task.getId(), isChecked); // Aktualisiere die Datenbank
             });
 

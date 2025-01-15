@@ -7,6 +7,7 @@ import java.sql.Statement;
 public class DatabaseSetup {
     private static final String DB_URL = "jdbc:sqlite:tasks.db";
 
+    // Create tasks Table if it doesn not exists
     public static void createTasksTable() {
         String sql = """
             CREATE TABLE IF NOT EXISTS tasks (
