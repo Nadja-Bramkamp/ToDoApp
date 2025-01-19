@@ -42,3 +42,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+tasks.db
+test_tasks.db
