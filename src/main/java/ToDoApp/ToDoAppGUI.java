@@ -1,11 +1,11 @@
-package todoapp;
+package ToDoApp;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.image.BufferedImage;
+import java.sql.SQLException;
 
 public class ToDoAppGUI {
     private TaskManager taskManager;
@@ -14,7 +14,7 @@ public class ToDoAppGUI {
     private JPanel taskDisplayPanel; // Display tasks
     private JButton addButton, deleteButton;
 
-    public ToDoAppGUI() {
+    public ToDoAppGUI() throws SQLException {
         taskManager = new TaskManager();
         frame = new JFrame("ToDo App");
         taskField = new JTextField(20);
@@ -118,7 +118,7 @@ public class ToDoAppGUI {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         new ToDoAppGUI();
     }
 }

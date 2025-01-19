@@ -1,4 +1,4 @@
-package todoapp;
+package ToDoApp;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

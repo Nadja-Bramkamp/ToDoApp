@@ -1,14 +1,15 @@
-package todoapp;
+package ToDoApp;
 
-import java.util.ArrayList;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
 public class TaskManager {
     private List<Task> tasks;
     private TaskDatabase taskDatabase;
 
-    public TaskManager() {
-        this.taskDatabase = new TaskDatabase();
+    public TaskManager() throws SQLException {
+        this.taskDatabase = new TaskDatabase(DriverManager.getConnection("jdbc:sqlite:tasks.db"));
         this.tasks = taskDatabase.loadTasks();
     }
 

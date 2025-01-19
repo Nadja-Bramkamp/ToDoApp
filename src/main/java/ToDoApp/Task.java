@@ -1,4 +1,4 @@
-package todoapp;
+package ToDoApp;
 
 public class Task {
     private int id;

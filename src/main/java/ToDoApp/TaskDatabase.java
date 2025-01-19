@@ -1,24 +1,43 @@
-package todoapp;
+package ToDoApp;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskDatabase {
-    // Use SQLITE as Database
-    private static final String DB_URL = "jdbc:sqlite:tasks.db";
+    private final Connection connection;
+
+    public TaskDatabase(Connection connection) {
+        this.connection = connection;
+        initializeDatabase();
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    private void initializeDatabase() {
+        String createTableSQL = """
+            CREATE TABLE IF NOT EXISTS tasks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                completed INTEGER NOT NULL
+            )
+        """;
+
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(createTableSQL);
+        } catch (SQLException e) {
+            System.err.println("Fehler beim Erstellen der Tabelle: " + e.getMessage());
+        }
+    }
 
     // Save the Task and return the corresponding object that includes the id given by the database
     public Task saveTask(String title, boolean completed) {
         // Create SQL-Statement
         String sql = "INSERT INTO tasks (title, completed) VALUES (?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pstmt = this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 
             pstmt.setString(1, title);
             pstmt.setInt(2, completed ? 1 : 0);
@@ -48,8 +67,7 @@ public class TaskDatabase {
         // SQL Statement
         String sql = "SELECT id, title, completed FROM tasks";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = this.connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             // Create result list
@@ -73,8 +91,7 @@ public class TaskDatabase {
         // SQL Statement
         String sql = "DELETE FROM tasks WHERE id = ?";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
 
             pstmt.setInt(1, id); // ID setzen
             int rowsAffected = pstmt.executeUpdate();
@@ -94,8 +111,7 @@ public class TaskDatabase {
         // SQL-Statement
         String sql = "UPDATE tasks SET completed = ? WHERE id = ?";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
 
             // Set Parameter
             pstmt.setInt(1, isCompleted ? 1 : 0); // 1 = true, 0 = false
