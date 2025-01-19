@@ -13,8 +13,8 @@ class TaskDatabaseTest {
     static void setupDatabase() throws SQLException {
         taskDatabase = new TaskDatabase(DriverManager.getConnection("jdbc:sqlite:test_tasks.db"));
 
-        // Create table
-        String createTableSQL = "CREATE TABLE test_tasks (" +
+        // Create table if not exists
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS test_tasks (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "title TEXT NOT NULL, " +
                 "completed BOOLEAN NOT NULL DEFAULT 0)";
@@ -45,5 +45,25 @@ class TaskDatabaseTest {
         assertEquals("Test Task", tasks.get(0).getTitle());
         assertFalse(tasks.get(0).getIsCompleted());
 
+    }
+
+    @Test
+    void testDeleteTask() {
+        Task savedTask = taskDatabase.saveTask("Delete task", false);
+        taskDatabase.deleteTask(savedTask.getId());
+
+        List<Task> tasks = taskDatabase.loadTasks();
+        assertTrue(tasks.isEmpty());
+    }
+
+    @Test
+    void testUpdateTask() {
+        Task savedTask = taskDatabase.saveTask("Update task", false);
+        taskDatabase.updateTaskStatus(savedTask.getId(), true);
+
+        List<Task> tasks = taskDatabase.loadTasks();
+        assertEquals(1, tasks.size());
+        assertEquals("Update task", tasks.get(0).getTitle());
+        assertTrue(tasks.get(0).getIsCompleted());
     }
 }
