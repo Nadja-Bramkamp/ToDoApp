@@ -45,3 +45,5 @@ build/
 
 tasks.db
 test_tasks.db
+ToDoApplication.iml
+identifier.sqlite
